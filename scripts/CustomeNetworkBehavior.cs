@@ -6,9 +6,12 @@ public class CustomeNetworkBehavior : NetworkBehaviour
 {
     private AnimationState animationState = new AnimationState("speed",0,false);
     private AnimationHandler animationHandler;
+
+    private EffectHandler EffectHandler;
     // Start is called before the first frame update
     void Start()
     {
+        EffectHandler = this.GetComponent<EffectHandler>();
         animationHandler = this.GetComponent<AnimationHandler>();
         if (!isLocalPlayer)
         {
@@ -24,7 +27,7 @@ public class CustomeNetworkBehavior : NetworkBehaviour
     {
         
     }
-    
+    //animation handler
     [Command]
     public void CmdAnimationToServer(string animationName,float speed,bool isTriger)
     {
@@ -32,20 +35,36 @@ public class CustomeNetworkBehavior : NetworkBehaviour
         RpcAnimationToClient(animationName,speed,isTriger);
     }
     [ClientRpc]
-    public void RpcAnimationToClient(string animationName,float speed,bool isTriger)
+    private void RpcAnimationToClient(string animationName,float speed,bool isTriger)
     {
         if(!isLocalPlayer)
             setAnimation(animationName,speed,isTriger);
     }
-
-    
-
-
-    public void setAnimation(string animationName,float speed,bool isTriger)
+    private void setAnimation(string animationName,float speed,bool isTriger)
     {
         animationState.Speed = speed;
         animationState.AnimationName = animationName;
         animationState.TrigerType = isTriger;
         animationHandler.updateAnimation(animationState);
+    }
+
+    
+    //effect handler
+    [Command]
+    public void CmdEffectToServer(string effectName)
+    {
+        setEffect(effectName);
+        RpcEffectToClient(effectName);
+    }
+
+    [ClientRpc]
+    public void RpcEffectToClient(string effectName)
+    {
+        if(!isLocalPlayer)
+             setEffect(effectName);
+    }   
+    private void setEffect(string effectName)
+    {
+        EffectHandler.updateEffect(effectName,this.GetComponentInChildren<Gun>().transform.position);
     }
 }

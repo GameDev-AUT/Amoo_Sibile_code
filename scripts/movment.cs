@@ -7,14 +7,16 @@ public class movment : MonoBehaviour
     // Start is called before the first frame update
 
     private CharacterController characterController;
-    private Animator animator;
+ 
     private AnimationState AnimationState = new AnimationState("speed",0,false);
     private AnimationHandler animationHandler;
+
+    private EffectHandler EffectHandler;
     private bool attack = false;
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
-        animator = GetComponentInChildren<Animator>();
+        EffectHandler = GetComponentInChildren<EffectHandler>();
         animationHandler = this.GetComponent<AnimationHandler>();
     }
 
@@ -46,7 +48,11 @@ public class movment : MonoBehaviour
             AnimationState.AnimationName = "attack";
             AnimationState.TrigerType = true;
             animationHandler.setAnimation(AnimationState);
-        } 
+        }
+        else if(Input.GetKeyDown(KeyCode.Z))
+        {
+            EffectHandler.buildEffect("vikingPower",this.GetComponentInChildren<Gun>().transform.position);
+        }
     }
     private void attacked()
     {
