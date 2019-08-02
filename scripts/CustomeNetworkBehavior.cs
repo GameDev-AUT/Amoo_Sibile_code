@@ -8,9 +8,12 @@ public class CustomeNetworkBehavior : NetworkBehaviour
     private AnimationHandler animationHandler;
 
     private EffectHandler EffectHandler;
+
+    private CustomeNetworkManager CustomeNetworkManager;
     // Start is called before the first frame update
     void Start()
     {
+        CustomeNetworkManager = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<CustomeNetworkManager>();
         EffectHandler = this.GetComponent<EffectHandler>();
         animationHandler = this.GetComponent<AnimationHandler>();
         if (!isLocalPlayer)
@@ -19,6 +22,7 @@ public class CustomeNetworkBehavior : NetworkBehaviour
         }
         else
         {
+            this.gameObject.tag = "local";
             this.gameObject.GetComponent<movment>().enabled = true;
         }
     }
@@ -66,5 +70,20 @@ public class CustomeNetworkBehavior : NetworkBehaviour
     private void setEffect(string effectName)
     {
         EffectHandler.updateEffect(effectName,this.GetComponentInChildren<Gun>().transform.position);
+    }
+
+
+
+    public void changeChar(int index)
+    {
+    //    if(isLocalPlayer)
+            CmdChangeChar(index);
+    }
+    [Command]
+    public void CmdChangeChar(int index)
+    {
+        Debug.Log("here");
+        NetworkManager.singleton.GetComponent<CustomeNetworkManager>().switchChar(this,index);
+      //  CustomeNetworkManager.switchChar(this,index);
     }
 }
