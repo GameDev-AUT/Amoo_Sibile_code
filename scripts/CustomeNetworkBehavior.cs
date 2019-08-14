@@ -7,12 +7,14 @@ public class CustomeNetworkBehavior : NetworkBehaviour
     private AnimationState animationState = new AnimationState("speed",0,false);
     private AnimationHandler animationHandler;
 
+  //  [SyncVar (hook = "OnHealthChange")]public float health;
     private EffectHandler EffectHandler;
-
+    
     private CustomeNetworkManager CustomeNetworkManager;
     // Start is called before the first frame update
     void Start()
     {
+//        health = 100;
         CustomeNetworkManager = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<CustomeNetworkManager>();
         EffectHandler = this.GetComponent<EffectHandler>();
         animationHandler = this.GetComponent<AnimationHandler>();
@@ -33,51 +35,52 @@ public class CustomeNetworkBehavior : NetworkBehaviour
     }
     //animation handler
     [Command]
-    public void CmdAnimationToServer(string animationName,float speed,bool isTriger)
+    public void CmdAnimationToServer(string animationName,float speed,bool isTriger,bool asbool)
     {
-        setAnimation(animationName,speed,isTriger); 
-        RpcAnimationToClient(animationName,speed,isTriger);
+        setAnimation(animationName,speed,isTriger,asbool); 
+        RpcAnimationToClient(animationName,speed,isTriger,asbool);
     }
     [ClientRpc]
-    private void RpcAnimationToClient(string animationName,float speed,bool isTriger)
+    private void RpcAnimationToClient(string animationName,float speed,bool isTriger,bool asbool)
     {
         if(!isLocalPlayer)
-            setAnimation(animationName,speed,isTriger);
+            setAnimation(animationName,speed,isTriger,asbool);
     }
-    private void setAnimation(string animationName,float speed,bool isTriger)
+    private void setAnimation(string animationName,float speed,bool isTriger,bool asbool)
     {
         animationState.Speed = speed;
         animationState.AnimationName = animationName;
         animationState.TrigerType = isTriger;
+        animationState.AsABool = asbool;
         animationHandler.updateAnimation(animationState);
     }
-
+    //
     
     //effect handler
     [Command]
-    public void CmdEffectToServer(string effectName)
+    public void CmdEffectToServer(string ability)
     {
-        setEffect(effectName);
-        RpcEffectToClient(effectName);
+        setEffect(ability);
+        RpcEffectToClient(ability);
     }
 
     [ClientRpc]
-    public void RpcEffectToClient(string effectName)
+    public void RpcEffectToClient(string ability)
     {
         if(!isLocalPlayer)
-             setEffect(effectName);
+             setEffect(ability);
     }   
-    private void setEffect(string effectName)
+    private void setEffect(string ability)
     {
-        EffectHandler.updateEffect(effectName,this.GetComponentInChildren<Gun>().transform.position);
+        EffectHandler.updateEffect(this.GetComponentInChildren<Gun>().transform.position,ability);
     }
-
-
-
+    //
+    
+    //player changer
     public void changeChar(int index)
     {
     //    if(isLocalPlayer)
-            CmdChangeChar(index);
+    CmdChangeChar(index);
     }
     [Command]
     public void CmdChangeChar(int index)
@@ -86,4 +89,62 @@ public class CustomeNetworkBehavior : NetworkBehaviour
         NetworkManager.singleton.GetComponent<CustomeNetworkManager>().switchChar(this,index);
       //  CustomeNetworkManager.switchChar(this,index);
     }
+
+    public void changeChar(string name)
+    {
+        CmdChangeChar2(name);
+
+    }
+    [Command]
+    public void CmdChangeChar2(string name)
+    {
+        Debug.Log("here");
+        NetworkManager.singleton.GetComponent<CustomeNetworkManager>().switchChar2(this,name);
+        //  CustomeNetworkManager.switchChar(this,index);
+        
+    }
+    
+    
+    
+    
+    //
+    [Command]
+    public void CmdIsAttacking(bool attack)
+    {
+        updateIsAttacking(attack);
+        RpcIsAttacking(attack);
+    }
+    
+    [ClientRpc]
+    public void RpcIsAttacking(bool attack)
+    {
+            if(!isLocalPlayer)
+               updateIsAttacking(attack);
+    }
+
+    private void updateIsAttacking(bool attack)
+    {
+      //  if (id.GetInstanceID().Equals(GetComponent<NetworkIdentity>().GetInstanceID()))
+     //   {
+            print("ferestad");
+            GetComponent<Player>().Attack = attack;
+            // }
+    }
+/*
+    [Command]
+    public void CmdHealth(float delta)
+    {
+        health = delta;
+        GetComponent<Player>().updateHealth(health);
+    }
+
+    public void OnHealthChange(float delta)
+    {
+        health = delta;
+        GetComponent<Player>().updateHealth(health);
+        print("plsssss");
+    }
+    
+    */
+    
 }

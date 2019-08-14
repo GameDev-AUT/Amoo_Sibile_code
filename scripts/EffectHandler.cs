@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class EffectHandler : MonoBehaviour
 {
-    [SerializeField] private GameObject vikingPower;
+    [SerializeField] private GameObject power = null;
+    [SerializeField] private GameObject skill = null;
 
     private CustomeNetworkBehavior CustomeNetworkBehavior;
     // Start is called before the first frame update
@@ -19,26 +20,44 @@ public class EffectHandler : MonoBehaviour
         
     }
 
-    public void buildEffect(string power,Vector3 startLocation)
+    public void buildEffect(Vector3 startLocation,string ability)
     {
-        switch (power)
+        if (ability.Equals("attack"))
         {
-            case "vikingPower":
-                GameObject gameObject = Instantiate(vikingPower, startLocation, vikingPower.transform.rotation);
-                Destroy(gameObject,3);
-                break;
+            if (power == null)
+                return;
+            GameObject gameObject =
+                Instantiate(power, startLocation, power.transform.rotation * this.transform.rotation);
+            CustomeNetworkBehavior.CmdEffectToServer(ability);
+            Destroy(gameObject, 3);
         }
-     //   CustomeNetworkBehavior.CmdEffectToServer(power,startLocation);//TODO
-     CustomeNetworkBehavior.CmdEffectToServer(power);
+        else
+        {
+            if (skill == null)
+                return;
+            GameObject gameObject =
+                Instantiate(skill, startLocation, skill.transform.rotation * this.transform.rotation);
+            CustomeNetworkBehavior.CmdEffectToServer(ability);
+            Destroy(gameObject, 3);
+        }
+
+        //   CustomeNetworkBehavior.CmdEffectToServer(power,startLocation);//TODO
     }
-    public void updateEffect(string power,Vector3 startLocation)
+    public void updateEffect(Vector3 startLocation,string ability)
     {
-        switch (power)
-        {
-            case "vikingPower":
-                GameObject gameObject = Instantiate(vikingPower, startLocation, vikingPower.transform.rotation);
-                Destroy(gameObject,3);
-                break;
-        }
+        
+                if (ability.Equals("attack"))
+                {
+                    GameObject gameObject =
+                        Instantiate(power, startLocation, power.transform.rotation * this.transform.rotation);
+                    Destroy(gameObject, 3);
+                }
+                else
+                {
+      
+                    GameObject gameObject =
+                        Instantiate(skill, startLocation, skill.transform.rotation * this.transform.rotation);
+                    Destroy(gameObject, 3);
+                }
     }
 }

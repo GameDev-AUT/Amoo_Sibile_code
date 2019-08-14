@@ -18,24 +18,34 @@ public class AnimationHandler : MonoBehaviour
     {
         if (animationState.TrigerType)
         {
+            
             animator.SetTrigger(animationState.AnimationName);
         }
-        else
+        else if(!animationState.AsABool)
         {
             animator.SetFloat(animationState.AnimationName,animationState.Speed);
         }
-        customeNetworkBehavior.CmdAnimationToServer(animationState.AnimationName,animationState.Speed,animationState.TrigerType);
+        else
+        {
+            animator.SetBool(animationState.AnimationName,true);
+        }
+        customeNetworkBehavior.CmdAnimationToServer(animationState.AnimationName,animationState.Speed,animationState.TrigerType,animationState.AsABool);
     }
     
     public void updateAnimation(AnimationState animationState)
     {
         if (animationState.TrigerType)
         {
+            
             animator.SetTrigger(animationState.AnimationName);
+        }
+        else if(!animationState.AsABool)
+        {
+            animator.SetFloat(animationState.AnimationName,animationState.Speed);
         }
         else
         {
-            animator.SetFloat(animationState.AnimationName,animationState.Speed);
+            animator.SetBool(animationState.AnimationName,true);
         }
     }   
     

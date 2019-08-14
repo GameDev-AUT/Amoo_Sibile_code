@@ -8,15 +8,17 @@ using UnityEngine.UI;
 public class SelectionPlayerGui : MonoBehaviour
 {
     private bool selected = false;
-    [SerializeField] private GameObject player;
-    [SerializeField] private GameObject customeNetworkManager;
+    //[SerializeField] private GameObject player;
+    [SerializeField]private GameObject customeNetworkManager;
     // Start is called before the first frame update
     public void initial()
     {
-        Invoke("defaultSelection",10);
-        player = customeNetworkManager.GetComponent<CustomeNetworkManager>().getPrefab();
-        print("safdasfa");
-        player.GetComponent<movment>().enabled = false;
+       // Invoke("defaultSelection",10);
+       // player = customeNetworkManager.GetComponent<CustomeNetworkManager>().getPrefab();
+      //  print("safdasfa");
+      GameObject.FindWithTag("local").GetComponent<movment>().enabled = false;
+      GameObject.FindWithTag("local").GetComponent<Player>().enabled = false;
+      //  player.GetComponent<movment>().enabled = false;
     }
 
     public  void vikingSelect()
@@ -53,6 +55,13 @@ public class SelectionPlayerGui : MonoBehaviour
         selected = true;
     }
 
+    public void select(string name)
+    {
+        Debug.Log(name);
+        GameObject.FindWithTag("local").GetComponent<CustomeNetworkBehavior>().changeChar(name);
+        selected = true;  
+    }
+
     
 
 
@@ -60,6 +69,6 @@ public class SelectionPlayerGui : MonoBehaviour
     {
         if (!selected)
             customeNetworkManager.GetComponent<CustomeNetworkManager>().playerIndex = 1;
-        player.GetComponent<movment>().enabled = true;
+      //  player.GetComponent<movment>().enabled = true;
     }
 }

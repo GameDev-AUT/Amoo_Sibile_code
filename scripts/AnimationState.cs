@@ -8,8 +8,10 @@ public class AnimationState
         private string animationName="speed";
         private float speed =0;
         private bool trigerType = false;
+        private bool asABool = false;
         public AnimationState(string animationName, float speed,bool trigerType)
         {
+            
             this.animationName = animationName;
             this.speed = speed;
             this.TrigerType = trigerType;
@@ -32,5 +34,10 @@ public class AnimationState
         {
             get => animationName;
             set => animationName = value;
+        }
+        public bool AsABool
+        {
+            get => asABool;
+            set => asABool = value;
         }
 }
